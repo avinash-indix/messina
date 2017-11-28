@@ -30,9 +30,9 @@ class RankingModel:
             sale_price_normalizer = (1. * 100)/ sale_price
         print search_score_normalizer, " ", ranking_count_normalizer, " ", sale_price_normalizer
         sorted_products = sorted(products,
-                key=lambda k: ((k['searchScore'] * search_score_normalizer) * 0.40) +
-                ((k['aggregatedRatings']['ratingCount'] * ranking_count_normalizer) * 0.2) +
-                ((k['priceRange'][0]['salePrice'] * sale_price_normalizer) * 0.40),
+                key=lambda k: ((k['searchScore'] * search_score_normalizer) * 0.4) +
+                ((k['aggregatedRatings']['ratingCount'] * ranking_count_normalizer) * 0.) +
+                ((k['priceRange'][0]['salePrice'] * sale_price_normalizer) * 0.0),
                 reverse=True)
         return sorted_products
 

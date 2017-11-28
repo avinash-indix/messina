@@ -71,7 +71,9 @@ def tag():
             qas = False
 
         res = api_controller.getProducts(q, sort, stores, qas)
+
         return res
+
     except:
         abort(500, traceback.format_exc())
 
