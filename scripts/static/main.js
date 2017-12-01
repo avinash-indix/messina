@@ -31,7 +31,7 @@ function populateProductsByType (type, products) {
       dom = $('#gatsbyProducts'); break;
   }
   dom.empty();
-  products.forEach(function (product) {
+  (products || []).forEach(function (product) {
     dom.append('<div class="col-lg-4">'+
       '<img style="height:200px; width: 80px;padding-left: 10px;" src="'+ product.image.url +'"/>'+
       '<p><span style="font-family: Arial; font-size: 16px;">'+ product.title +'</span><br>'+
@@ -127,15 +127,33 @@ function query () {
   var storeIds = $('#store_id').val();
   var useQas = $('select[name="qas"]').val();
 
+  // weights
+  var brand_weight =  $('#brand_weight').val();
+  var popularity_weight =  $('#ratings_weight').val();
+  var sale_price_weight =  $('#sale_price_weight').val();
+  var relevance_weight =  $('#relavance_weight').val();
+  var search_weight =  $('#search_weight').val();
+  var catconf_weight =  $('#catconf_weight').val();
+
   if (!q) {
       alert("Please enter valid search term!!!");
       $('.btn-search').text('Search');
       return;
   }
+
   var params = {
     q: q,
     sort_by: sortBy,
     store_ids: storeIds.join(','),
+    relevanceParams: JSON.stringify({
+    useRankScore: true,
+    brandScoreWeight: brand_weight,
+    popularityWeight: popularity_weight,
+    salepriceWeight: sale_price_weight,
+    relevanceWeight: relevance_weight,
+    catConfScoreWeight: 0.0,
+    searchScoreWeight: 1.0
+    }),
     qas: useQas
   };
   console.log(params);

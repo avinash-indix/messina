@@ -4,7 +4,7 @@ from threading import Thread
 from Queue import Queue
 
 class SearchQuery(object):
-    def __init__(self, search_term, sort_by, key, result_q, post_query, store_ids, useQas, useBrand):
+    def __init__(self, search_term, sort_by, key, result_q, post_query, store_ids, useQas, useBrand,relavance=None):
         self.search_term = search_term
         self.sort_by = sort_by
         self.key     = key
@@ -13,6 +13,7 @@ class SearchQuery(object):
         self.store_ids = store_ids
         self.useQas = useQas
         self.useBrandPredictor = useBrand
+        self.relevance = relavance
         print "useBrand : "+str(useBrand)
 
     def __str__(self):
@@ -30,7 +31,8 @@ class Worker(Thread):
         while True:
             query = self.queries.get()
             if query.is_post_query:
-                products = self.data_collector.post(query.search_term, query.store_ids, query.useQas, query.useBrandPredictor)
+                print "this is " + self.name + "\t: query.relevance:\t"+str(query.relevance)
+                products = self.data_collector.post(query.search_term, query.store_ids, query.useQas, query.useBrandPredictor,query.relevance)
             else:
                 products = self.data_collector.get(query.search_term, query.store_ids)
             if query.is_post_query and query.sort_by:
@@ -90,7 +92,7 @@ class ApiController(object):
         #     # worker.daemon = True
         #     worker.start()
 
-    def getProducts(self, search_term, sort_by, stores, useQas):
+    def getProducts(self, search_term, sort_by, stores, useQas,relevance = None):
         alias_response = self.alias_service.getAlias(search_term)
         corrected_search_term = alias_response['correctedQ']
         if len(corrected_search_term) == 0:
@@ -99,9 +101,10 @@ class ApiController(object):
         resutl_api = Queue(1)
         resutl_q = Queue(1)
         resultBP_q = Queue(1)
-        api_q = SearchQuery(corrected_search_term, sort_by, "api", resutl_api, False, store_ids, useQas, False)
-        gatsby_q = SearchQuery(corrected_search_term, sort_by, "gatsby", resutl_q, True, store_ids, useQas, False)
-        gatsbyBP_q = SearchQuery(corrected_search_term, sort_by, "gatsbyBP", resultBP_q, True, store_ids, useQas, True)
+        print  "relevance inside getProducts:\t" + str(relevance)
+        api_q = SearchQuery(corrected_search_term, sort_by, "api", resutl_api, False, store_ids, useQas, False,None)
+        gatsby_q = SearchQuery(corrected_search_term, sort_by, "gatsby", resutl_q, True, store_ids, useQas, False,relevance)
+        gatsbyBP_q = SearchQuery(corrected_search_term, sort_by, "gatsbyBP", resultBP_q, True, store_ids, useQas, True,relevance)
 
 
         self.gatsby_queries.put(gatsby_q)

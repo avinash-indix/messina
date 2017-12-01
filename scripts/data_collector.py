@@ -84,10 +84,33 @@ class ProductGatsbyQuery(object):
             return prefix + where_clause
         return where_clause
 
-    def getQuery(self, search_term, store_ids, useQas, useBrandPredictor):
+    def getQuery(self, search_term, store_ids, useQas, useBrandPredictor, weights):
         self.payload["searchText"] = search_term
         self.payload["useQas"] = useQas
         self.payload["useBrandPredictor"] = useBrandPredictor
+
+        for k in weights:
+            print k,type(k)
+            if k == "useRankScore":
+                weights[k] = True
+            else:
+                # if type(weights[k]) == str or type(weights[k]) == :
+                weights[k] = float(weights[k])
+                print weights[k]
+        self.payload['relevanceParams'] = weights
+
+        """
+        brand_weight : brand_weight,
+        ratings_weight : ratings_weight,
+        sale_price_weight : sale_price_weight,
+        relavance_weight : relavance_weight,
+        """
+
+        # self.payload['brand_weight'] = weights['brand_weight']
+        # self.payload['ratings_weight'] = weights['ratings_weight']
+        # self.payload['sale_price_weight'] = weights['sale_price_weight']
+        # self.payload['relavance_weight'] = weights['relavance_weight']
+
         timestamp = int(time.mktime((datetime.now() - timedelta(days=self.n_days)).timetuple()) * 1000)
         self.payload["offersWhere"] = "availability == 0 && timestamp > %s" % (timestamp)
         self.payload["productsWhere"] = "geo == 356" + self._buildWhereClauseWithStores(store_ids);
@@ -109,9 +132,9 @@ class DataCollector(object):
         self.query = query
         self.http_client = HttpClient()
 
-    def post(self, search_term, store_ids, useQas, useBrandPredictor):
+    def post(self, search_term, store_ids, useQas, useBrandPredictor,relevance):
         print "Inside post: brand" + str(useBrandPredictor)
-        q = self.query.getQuery(search_term, store_ids, useQas, useBrandPredictor)
+        q = self.query.getQuery(search_term, store_ids, useQas, useBrandPredictor,relevance)
         response = self.http_client.postQuery(q[0], q[1], q[2])
         return response
 

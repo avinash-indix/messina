@@ -13,7 +13,7 @@ class HttpClient(object):
         try:
             res = requests.get(url)
             if res.status_code != HTTP_SUCCESS:
-                raise Exception("Api error" + str(res.status_code))
+                raise Exception("Api error" + str(res.text))
             return res.json()
         except Exception as e:
             print e
@@ -24,7 +24,7 @@ class HttpClient(object):
             #print url, " ", headers, " ", json.dumps(params)
             res = requests.post(url, headers = headers, data = json.dumps(params))
             if res.status_code != HTTP_SUCCESS:
-                raise Exception("Api Error " + str(res.status_code))
+                raise Exception("Api Error " + str(res.text))
             return res.json()
         except Exception as e:
             print e

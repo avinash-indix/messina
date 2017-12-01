@@ -33,12 +33,40 @@
                 <option value="6078">Tatacliq</option>
                 <option value="5119">Abof</option>
               </select>
-              <select class="form-control" name="qas">
+              <select class="form-control" name="qas" margin-right="10px">
                 <option value="0">Use QAS</option>
                 <option value="1">Bypass QAS</option>
               </select>
+              <div class="row">
               <button class="btn btn-outline-success btn-search my-2 my-sm-0" onclick="query()" style="margin-left: 10px;">Search</button>
+              <div class="col">
+                  <div class="row">
+                    <label for="search_weight">&#9 Search Weight</label>
+                    <input class="form-control mr-sm-1" type="text" placeholder="Search Weight" id="search_weight" value="1.0" disabled>
+                  </div>
+                  <div class="row">
+                      <label for="catconf_weight">&#9 Category Confidence Weight</label>
+                      <input class="form-control mr-sm-1" type="text" placeholder="Category Confidence Weight" id="catconf_weight" value="0.0" disabled>
+                  </div>
+                  <div class="row">
+                      <label for="brand_weight">Brand Weight</label>
+                      <input class="form-control mr-sm-1" type="text" placeholder="Brand Weight" id="brand_weight" value="1.0">
+                  </div>
+                  <div class="row">
+                      <label for="ratings_weight">Ratings Weight</label>
+                      <input class="form-control mr-sm-1" type="text" placeholder="Ratings Weight" id="ratings_weight" value="0.4">
+                  </div>
+                  <div class="row">
+                      <label for="sale_price_weight">Sale Price Weight</label>
+                      <input class="form-control mr-sm-1" type="text" placeholder="Sale Price Weight" id="sale_price_weight" value="0.3">
+                  </div>
+                  <div class="row">
+                      <label for="relavance_weight">Relavance Weight</label>
+                      <input class="form-control mr-sm-1" type="text" placeholder="Relevance Weight" id="relavance_weight" value="1.0"disabled>
+                  </div>
+              </div>
           </div>
+            </div>
           <div class="row">
             <div class="col-lg-4" style="text-align: center; padding: 10px 0px;">GATSBY WITH BP</div>
             <div class="col-lg-4" style="text-align: center; padding: 10px 0px;">GATSBY WITHOUT BP</div>

@@ -58,6 +58,8 @@ def tag():
         sort_by = request.params.get('sort_by')
         stores  = request.params.get('store_ids')
         useQas = request.params.get('qas')
+        relevanceWeights = json.loads(request.params.get('relevanceParams'))
+        print(relevanceWeights)
         response.content_type = "application/json; charset=UTF-8"
         response.headers['Access-Control-Allow-Origin'] = "*"
         if sort_by == "0":
@@ -70,7 +72,7 @@ def tag():
         else:
             qas = False
 
-        res = api_controller.getProducts(q, sort, stores, qas)
+        res = api_controller.getProducts(q, sort, stores, qas,relevanceWeights)
 
         return res
 
