@@ -32,7 +32,7 @@ function populateProductsByType (type, products, query = "") {
   }
   dom.empty();
   const max_popularity_score = (products || []).reduce((acc, cur) => (acc >= cur.aggregatedRatings.ratingCount) ? acc : cur.aggregatedRatings.ratingCount, 0)
-  const max_salePrice_score = (products || []).reduce((acc, cur) => (acc >= cur.priceRange[1].salePrice) ? acc : cur.priceRange[1].salePrice, 0)
+  const max_salePrice_score = (products || []).reduce((acc, cur) => (acc >= cur.priceRange[1].salePrice*100) ? acc : cur.priceRange[1].salePrice*100, 0)
   const max_relevance_score = (products || []).reduce((acc, cur) => {
     const rel_score = (((cur.searchScore + 100)*1.0) + (query.split(" ").length/cur.title.split(" ").length * 100))
     return (acc >= rel_score) ? acc : rel_score
@@ -42,7 +42,7 @@ function populateProductsByType (type, products, query = "") {
       const norm_pop_score = (max_popularity_score == 0) ? 0 : (100/max_popularity_score*0.4)
       const norm_rel_score = (max_relevance_score == 0) ? 0 : (100/max_relevance_score*0.3)
       const norm_sale_price = (max_salePrice_score == 0) ? 0 : (100/max_salePrice_score*0.3)
-      const normalizedScore  = rel_score*norm_rel_score + product.aggregatedRatings.ratingCount*norm_pop_score + product.priceRange[1].salePrice*norm_sale_price
+      const normalizedScore  = rel_score*norm_rel_score + product.aggregatedRatings.ratingCount*norm_pop_score + product.priceRange[1].salePrice*norm_sale_price*100
       dom.append('<div class="col-lg-4">'+
         '<img style="height:200px; width: 80px;padding-left: 10px;" src="'+ product.image.url +'"/>'+
         '<p><span style="font-family: Arial; font-size: 16px;">'+ product.title +'</span><br>'+
