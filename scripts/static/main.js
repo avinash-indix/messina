@@ -20,7 +20,7 @@ function populateProducts (products) {
   });
 }
 
-function populateProductsByType (type, products) {
+function populateProductsByType (type, products, query = "") {
   var dom;
   switch (type) {
     case 'api':
@@ -31,20 +31,32 @@ function populateProductsByType (type, products) {
       dom = $('#gatsbyProducts'); break;
   }
   dom.empty();
-  (products || []).forEach(function (product) {
-    dom.append('<div class="col-lg-4">'+
-      '<img style="height:200px; width: 80px;padding-left: 10px;" src="'+ product.image.url +'"/>'+
-      '<p><span style="font-family: Arial; font-size: 16px;">'+ product.title +'</span><br>'+
-      '<span style="font-family: Arial; font-size: 11px;">by '+product.brandName+'<br>'+
-      '<span style="font-family: Arial; font-size: 11px;">mpid '+product.mpid+'<br>'+
-      '<span style="font-family: Arial; font-size: 11px;">category '+product.categoryNamePath+'<br>'+
-      '<span style="font-family: Arial; font-size: 11px;">storeId: '+product.priceRange[0].storeId+'<br>'+
-      '<span style="font-family: Arial; font-size: 11px;">searchScore: '+product.searchScore+'<br>'+
-      '<span style="font-color: red; font-size: 13px;">from $'+ product.priceRange[0].salePrice+' - '+ product.priceRange[1].salePrice +'</span><br>'+
-      'RatingCount '+ product.aggregatedRatings.ratingCount + ' RatingValue '+ product.aggregatedRatings.ratingValue +'</p>'+
-      '</div>'
-    );
-  });
+  const max_popularity_score = (products || []).reduce((acc, cur) => (acc >= cur.aggregatedRatings.ratingCount) ? acc : cur.aggregatedRatings.ratingCount, 0)
+  const max_salePrice_score = (products || []).reduce((acc, cur) => (acc >= cur.priceRange[1].salePrice) ? acc : cur.priceRange[1].salePrice, 0)
+  const max_relevance_score = (products || []).reduce((acc, cur) => {
+    const rel_score = (((cur.searchScore + 100)*1.0) + (query.split(" ").length/cur.title.split(" ").length * 100))
+    return (acc >= rel_score) ? acc : rel_score
+  }, 0)
+  for(let product of products) {
+      const rel_score = (((product.searchScore + 100)*1.0) + (query.split(" ").length/product.title.split(" ").length * 100))
+      const norm_pop_score = (max_popularity_score == 0) ? 0 : (100/max_popularity_score*0.4)
+      const norm_rel_score = (max_relevance_score == 0) ? 0 : (100/max_relevance_score*0.3)
+      const norm_sale_price = (max_salePrice_score == 0) ? 0 : (100/max_salePrice_score*0.3)
+      const normalizedScore  = rel_score*norm_rel_score + product.aggregatedRatings.ratingCount*norm_pop_score + product.priceRange[1].salePrice*norm_sale_price
+      dom.append('<div class="col-lg-4">'+
+        '<img style="height:200px; width: 80px;padding-left: 10px;" src="'+ product.image.url +'"/>'+
+        '<p><span style="font-family: Arial; font-size: 16px;">'+ product.title +'</span><br>'+
+        '<span style="font-family: Arial; font-size: 11px;">by '+product.brandName+'<br>'+
+        '<span style="font-family: Arial; font-size: 11px;">mpid '+product.mpid+'<br>'+
+        '<span style="font-family: Arial; font-size: 11px;">category '+product.categoryNamePath+'<br>'+
+        '<span style="font-family: Arial; font-size: 11px;">storeId: '+product.priceRange[0].storeId+'<br>'+
+        '<span style="font-family: Arial; font-size: 11px;">searchScore: '+product.searchScore+'<br>'+
+         `${normalizedScore ? '<span style="font-family: Arial; font-size: 11px;">normalizedScore: '+normalizedScore+'<br>' : ''}`+
+        '<span style="font-color: red; font-size: 13px;">from $'+ product.priceRange[0].salePrice+' - '+ product.priceRange[1].salePrice +'</span><br>'+
+        'RatingCount '+ product.aggregatedRatings.ratingCount + ' RatingValue '+ product.aggregatedRatings.ratingValue +'</p>'+
+        '</div>'
+      );
+  }
 }
 
 function populateStatus (query, count, tags) {
@@ -162,8 +174,8 @@ function query () {
     function (resp) {
       $('.btn-search').text(searchText);
       populateProductsByType('api', resp.api.products)
-      populateProductsByType('gatsby', resp.gatsby.products)
-      populateProductsByType('gatsbyBP', resp.gatsbyBP.products)
+      populateProductsByType('gatsby', resp.gatsby.products, params.q)
+      populateProductsByType('gatsbyBP', resp.gatsbyBP.products, params.q)
    })
 }
 
