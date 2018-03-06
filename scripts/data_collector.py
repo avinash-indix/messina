@@ -52,7 +52,8 @@ class ProductGatsbyQuery(object):
                         "filterStores" : [2776, 4919, 6078, 5119, 4443],
                         "projectionStores" : [2776, 4919, 6078, 5119, 4443],
                         "projectOnlyMatched" : True,
-                        "sortBy" : "relevance"
+                        "sortBy" : "relevance",
+                         "debugScores": True
                         }
         self.n_days = n_days
         self.query_to_cat = Q2Category()
