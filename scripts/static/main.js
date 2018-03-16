@@ -27,18 +27,18 @@ function getNormScore(products = [], params={}) {
   let maxSalePrice = 0
 
   for(x of products) {
-    const popularityScore = (x.valuesForRanking || {}).popularityScore || 0
-    const relevanceScore  = (x.valuesForRanking || {}).relevanceScore || 0
-    const salePrice       = (x.valuesForRanking || {}).salePrice || 0
+    const popularityScore = (x.debugScores || {}).popularityScore || 0
+    const relevanceScore  = (x.debugScores || {}).relevanceScore || 0
+    const salePrice       = (x.debugScores || {}).salePrice || 0
     maxPopularityScore = Math.max(popularityScore, maxPopularityScore)
     maxRelevanceScore = Math.max(relevanceScore, maxRelevanceScore)
     maxSalePrice = Math.max(salePrice, maxSalePrice)
   }
   return (product) => {
 
-    const popularityScore = (product.valuesForRanking || {}).popularityScore || 0
-    const relevanceScore  = (product.valuesForRanking || {}).relevanceScore || 0
-    const salePrice       = (product.valuesForRanking || {}).salePrice || 0
+    const popularityScore = (product.debugScores || {}).popularityScore || 0
+    const relevanceScore  = (product.debugScores || {}).relevanceScore || 0
+    const salePrice       = (product.debugScores || {}).salePrice || 0
 
     const norm_pop_score = (maxPopularityScore == 0 ? 0: (100.0)/(maxPopularityScore)) * params.popularityWeight;
     const norm_rel_score = (maxRelevanceScore  == 0 ? 0: (100.0)/(maxRelevanceScore)) * params.relevanceWeight;
