@@ -38,6 +38,7 @@ function getNormScore(products = [], params={}) {
     maxSalePrice = Math.max(salePrice, maxSalePrice)
   }
   return (product) => {
+    const searchScore = (product.debugScores || {}).searchScore || 0
 
     const brandfactor = (searchScore < 30) ? 3 : (searchScore < 50) ? 2 : 1;
 
